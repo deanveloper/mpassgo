@@ -1,11 +1,13 @@
 package mpassgo
 
-var Maximum = []string {
+type TemplateSet []string
+
+var Maximum = TemplateSet {
     "anoxxxxxxxxxxxxxxxxx",
     "axxxxxxxxxxxxxxxxxno",
 }
 
-var Long = []string {
+var Long = TemplateSet {
     "CvcvnoCvcvCvcv",
     "CvcvCvcvnoCvcv",
     "CvcvCvcvCvcvno",
@@ -29,22 +31,22 @@ var Long = []string {
     "CvccCvcvCvccno",
 }
 
-var Medium = []string {
+var Medium = TemplateSet {
     "CvcnoCvc",
     "CvcCvcno",
 }
 
-var Short = []string {
+var Short = TemplateSet {
     "Cvcn",
 }
 
-var Basic = []string {
+var Basic = TemplateSet {
     "aaanaaan",
     "aannaaan",
     "aaannaaa",
 }
 
-var Pin = []string {
+var Pin = TemplateSet {
     "nnnn",
 }
 

@@ -6,11 +6,12 @@ import (
     "crypto/hmac"
     "crypto/sha256"
     "golang.org/x/crypto/scrypt"
+    "fmt"
 )
 
 var saltPrefix = []byte("com.lyndir.masterpassword")
 
-func GetPassword(name, site, pass memguard.LockedBuffer, counter *int, templateSet []string) *memguard.LockedBuffer {
+func GetPassword(name, site, pass *memguard.LockedBuffer, counter int, templateSet TemplateSet) *memguard.LockedBuffer {
 
     // first, make the buffer for the key's salt
     saltLength := len(saltPrefix) + 4 + len(name.Buffer())
@@ -18,9 +19,13 @@ func GetPassword(name, site, pass memguard.LockedBuffer, counter *int, templateS
     checkErr(err)
 
     // copy stuff into salt buffer
-    salt.Copy(saltPrefix)
-    salt.CopyAt(convertNum(len(name.Buffer())), len(saltPrefix))
-    salt.CopyAt(name.Buffer(), len(saltPrefix) + 4)
+    salt.Move(saltPrefix)
+    salt.MoveAt(convertNum(len(name.Buffer())), len(saltPrefix))
+    salt.MoveAt(name.Buffer(), len(saltPrefix) + 4)
+
+    for i, e := range pass.Buffer() {
+        fmt.Println(i, e)
+    }
 
     // make key based on salt
     key, err := scrypt.Key(pass.Buffer(), salt.Buffer(), 32768, 8, 2, 64)
@@ -31,10 +36,10 @@ func GetPassword(name, site, pass memguard.LockedBuffer, counter *int, templateS
     seedBuf, err := memguard.New(seedLength, false)
     checkErr(err)
 
-    seedBuf.Copy(saltPrefix)
-    seedBuf.CopyAt(convertNum(len(site.Buffer())), len(saltPrefix))
-    seedBuf.CopyAt(site.Buffer(), len(saltPrefix) + 4)
-    seedBuf.CopyAt(convertNum(*counter), len(saltPrefix) + 4 + len(site.Buffer()))
+    seedBuf.Move(saltPrefix)
+    seedBuf.MoveAt(convertNum(len(site.Buffer())), len(saltPrefix))
+    seedBuf.MoveAt(site.Buffer(), len(saltPrefix) + 4)
+    seedBuf.MoveAt(convertNum(counter), len(saltPrefix) + 4 + len(site.Buffer()))
 
     seed := hmac.New(sha256.New, key)
     seed.Write(seedBuf.Buffer())
