@@ -39,7 +39,7 @@ func GetPassword(name, website, masterPass []byte, counter int, set TemplateSet)
 func GetMasterKey(name, password []byte) ([]byte, error) {
 
 	seedLen := len(seedPrefix) + 4 + len(name)
-	seed := bytes.NewBuffer(make([]byte, seedLen))
+	seed := bytes.NewBuffer(make([]byte, 0, seedLen))
 	seed.Write(seedPrefix)
 	seed.Write(convertNum(len(name)))
 	seed.Write(name)
