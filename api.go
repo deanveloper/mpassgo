@@ -1,75 +1,104 @@
 package mpassgo
 
 import (
-    "encoding/binary"
-    "crypto/hmac"
-    "crypto/sha256"
-    "golang.org/x/crypto/scrypt"
-    "bytes"
+	"bytes"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/binary"
+	"errors"
+
+	"golang.org/x/crypto/scrypt"
+	"unicode/utf8"
+	"fmt"
 )
 
+var ErrInvalidTemplate = errors.New("invalid template provided")
 var saltPrefix = []byte("com.lyndir.masterpassword")
 
-func GetPassword(name, site, pass []byte, counter int, templateSet TemplateSet) []byte {
+// A convenience function that takes all needed inputs and generates the password from there.
+func GetPassword(name, masterPass, website []byte, counter int, set TemplateSet) ([]byte, error) {
+	key, err := GetKey(name, masterPass)
+	if err != nil {
+		return nil, err
+	}
+	defer zeroSlice(key)
 
-    // first, make the buffer for the key's salt
-    saltLength := len(saltPrefix) + 4 + len(name)
-    salt := bytes.NewBuffer(make([]byte, saltLength))
+	fmt.Println(key)
 
-    // copy stuff into salt buffer
-    salt.Write(saltPrefix)
-    salt.Write(convertNum(len(name)))
-    salt.Write(name)
+	seed := GetSeed(key, website, counter)
+	defer zeroSlice(seed)
 
-    ZeroSlice(name)
+	fmt.Println(seed)
 
-    // make key based on salt
-    key, err := scrypt.Key(pass, salt.Bytes(), 32768, 8, 2, 64)
-    checkErr(err)
+	template := GetTemplate(seed, set)
+	password := SeedToPassword(seed, template)
 
-    ZeroSlice(pass)
-
-    // make buffer for what we're seeding
-    seedLength := len(saltPrefix) + 4 + len(site) + 4
-    seedBuf := bytes.NewBuffer(make([]byte, seedLength))
-
-    seedBuf.Write(saltPrefix)
-    seedBuf.Write(convertNum(len(site)))
-    seedBuf.Write(site)
-    seedBuf.Write(convertNum(counter))
-
-    ZeroSlice(site)
-
-    seed := hmac.New(sha256.New, key)
-    seed.Write(seedBuf.Bytes())
-
-    template := templateSet[int(seed.Sum(nil)[0]) % len(templateSet)]
-
-    password := bytes.NewBuffer(make([]byte, len(template)))
-    checkErr(err)
-    for i, r := range template {
-        passChars := charTemplates[r]
-        passChar := passChars[int(seed.Sum(nil)[i + 1]) % len(passChars)]
-        password.WriteByte(passChar)
-    }
-
-    return password.Bytes()
+	return password, nil
 }
 
-func ZeroSlice(s []byte) {
-    for i := range s {
-        s[i] = 0
-    }
+// Gets the key for a given password.
+// A side effect of using this function is that the password
+// slice gets zero'd. This is done to discourage API users from
+// using the master password anywhere else. Both the name and
+// password should be UTF8 encoded.
+func GetKey(name, password []byte) ([]byte, error) {
+
+	saltLen := len(saltPrefix) + 4 + len(name)
+	salt := bytes.NewBuffer(make([]byte, saltLen))
+	salt.Write(saltPrefix)
+	salt.Write(convertNum(len(name)))
+	salt.Write(name)
+
+	return scrypt.Key(password, salt.Bytes(), 32768, 8, 2, 64)
 }
 
-func checkErr(err error) {
-    if err != nil {
-        panic(err)
-    }
+// Gets the seed provided a key and a counter. The website
+// should be UTF8 encoded.
+func GetSeed(key, website []byte, counter int) []byte {
+	seededLen := len(saltPrefix) + 4 + len(website) + 4
+	seeded := bytes.NewBuffer(make([]byte, 0, seededLen))
+
+	seeded.Write(saltPrefix)
+	seeded.Write(convertNum(len(website)))
+	seeded.Write(website)
+	seeded.Write(convertNum(counter))
+
+	hasher := hmac.New(sha256.New, key)
+	return hasher.Sum(seeded.Bytes())
+}
+
+// Figures out what the password template is going to be.
+func GetTemplate(seed []byte, templates TemplateSet) []byte {
+	return templates[seed[0]%byte(len(templates))]
+}
+
+// Encodes the seed into the template, generating the password.
+// Panics if an invalid template string is provided.
+func SeedToPassword(seed []byte, template []byte) []byte {
+	pass := make([]byte, len(template))
+	for i, e := range template {
+		r, _ := utf8.DecodeRune([]byte{e})
+		runes := runeMap[r]
+		if runes == "" {
+			panic(ErrInvalidTemplate)
+		}
+		fmt.Println(seed[i+1])
+		fmt.Println(byte(len(runes)))
+
+		pass[i] = runes[seed[i+1]%byte(len(runes))]
+	}
+
+	return pass
+}
+
+func zeroSlice(slice []byte) {
+	for i := range slice {
+		slice[i] = 0
+	}
 }
 
 func convertNum(i int) []byte {
-    b := make([]byte, 4)
-    binary.BigEndian.PutUint32(b, uint32(i))
-    return b
+	b := make([]byte, 4)
+	binary.BigEndian.PutUint32(b, uint32(i))
+	return b
 }

@@ -1,56 +1,56 @@
 package mpassgo
 
-type TemplateSet []string
+type TemplateSet [][]byte
 
 var Maximum = TemplateSet{
-	"anoxxxxxxxxxxxxxxxxx",
-	"axxxxxxxxxxxxxxxxxno",
+	[]byte("anoxxxxxxxxxxxxxxxxx"),
+	[]byte("axxxxxxxxxxxxxxxxxno"),
 }
 
 var Long = TemplateSet{
-	"CvcvnoCvcvCvcv",
-	"CvcvCvcvnoCvcv",
-	"CvcvCvcvCvcvno",
-	"CvccnoCvcvCvcv",
-	"CvccCvcvnoCvcv",
-	"CvccCvcvCvcvno",
-	"CvcvnoCvccCvcv",
-	"CvcvCvccnoCvcv",
-	"CvcvCvccCvcvno",
-	"CvcvnoCvcvCvcc",
-	"CvcvCvcvnoCvcc",
-	"CvcvCvcvCvccno",
-	"CvccnoCvccCvcv",
-	"CvccCvccnoCvcv",
-	"CvccCvccCvcvno",
-	"CvcvnoCvccCvcc",
-	"CvcvCvccnoCvcc",
-	"CvcvCvccCvccno",
-	"CvccnoCvcvCvcc",
-	"CvccCvcvnoCvcc",
-	"CvccCvcvCvccno",
+	[]byte("CvcvnoCvcvCvcv"),
+	[]byte("CvcvCvcvnoCvcv"),
+	[]byte("CvcvCvcvCvcvno"),
+	[]byte("CvccnoCvcvCvcv"),
+	[]byte("CvccCvcvnoCvcv"),
+	[]byte("CvccCvcvCvcvno"),
+	[]byte("CvcvnoCvccCvcv"),
+	[]byte("CvcvCvccnoCvcv"),
+	[]byte("CvcvCvccCvcvno"),
+	[]byte("CvcvnoCvcvCvcc"),
+	[]byte("CvcvCvcvnoCvcc"),
+	[]byte("CvcvCvcvCvccno"),
+	[]byte("CvccnoCvccCvcv"),
+	[]byte("CvccCvccnoCvcv"),
+	[]byte("CvccCvccCvcvno"),
+	[]byte("CvcvnoCvccCvcc"),
+	[]byte("CvcvCvccnoCvcc"),
+	[]byte("CvcvCvccCvccno"),
+	[]byte("CvccnoCvcvCvcc"),
+	[]byte("CvccCvcvnoCvcc"),
+	[]byte("CvccCvcvCvccno"),
 }
 
 var Medium = TemplateSet{
-	"CvcnoCvc",
-	"CvcCvcno",
+	[]byte("CvcnoCvc"),
+	[]byte("CvcCvcno"),
 }
 
 var Short = TemplateSet{
-	"Cvcn",
+	[]byte("Cvcn"),
 }
 
 var Basic = TemplateSet{
-	"aaanaaan",
-	"aannaaan",
-	"aaannaaa",
+	[]byte("aaanaaan"),
+	[]byte("aannaaan"),
+	[]byte("aaannaaa"),
 }
 
 var Pin = TemplateSet{
-	"nnnn",
+	[]byte("nnnn"),
 }
 
-var charTemplates = map[rune]string{
+var runeMap = map[rune]string{
 	'V': "AEIOU",
 	'C': "BCDFGHJKLMNPQRSTVWXYZ",
 	'v': "aeiou",
