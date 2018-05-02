@@ -1,13 +1,13 @@
 package mpassgo
 
-type TemplateSet [][]byte
+type PasswordType [][]byte
 
-var Maximum = TemplateSet{
+var Maximum = PasswordType{
 	[]byte("anoxxxxxxxxxxxxxxxxx"),
 	[]byte("axxxxxxxxxxxxxxxxxno"),
 }
 
-var Long = TemplateSet{
+var Long = PasswordType{
 	[]byte("CvcvnoCvcvCvcv"),
 	[]byte("CvcvCvcvnoCvcv"),
 	[]byte("CvcvCvcvCvcvno"),
@@ -31,22 +31,22 @@ var Long = TemplateSet{
 	[]byte("CvccCvcvCvccno"),
 }
 
-var Medium = TemplateSet{
+var Medium = PasswordType{
 	[]byte("CvcnoCvc"),
 	[]byte("CvcCvcno"),
 }
 
-var Short = TemplateSet{
+var Short = PasswordType{
 	[]byte("Cvcn"),
 }
 
-var Basic = TemplateSet{
+var Basic = PasswordType{
 	[]byte("aaanaaan"),
 	[]byte("aannaaan"),
 	[]byte("aaannaaa"),
 }
 
-var Pin = TemplateSet{
+var Pin = PasswordType{
 	[]byte("nnnn"),
 }
 

@@ -15,7 +15,7 @@ var ErrInvalidTemplate = errors.New("invalid template provided")
 var seedPrefix = []byte("com.lyndir.masterpassword")
 
 // A convenience function that takes all needed inputs and generates the password from there.
-func GetPassword(name, website, masterPass []byte, counter int, set TemplateSet) ([]byte, error) {
+func GetPassword(name, website, masterPass []byte, counter int, set PasswordType) ([]byte, error) {
 	mKey, err := GetMasterKey(name, masterPass)
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func GetSiteKey(mKey, website []byte, counter int) []byte {
 }
 
 // Figures out what the password template is going to be.
-func GetTemplate(sKey []byte, templates TemplateSet) []byte {
+func GetTemplate(sKey []byte, templates PasswordType) []byte {
 	return templates[sKey[0]%byte(len(templates))]
 }
 
