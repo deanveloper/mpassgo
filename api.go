@@ -39,7 +39,11 @@ func GetPassword(name, website, masterPass []byte, counter int, set TemplateSet)
 func GetMasterKey(name, password []byte) ([]byte, error) {
 
 	seedLen := len(seedPrefix) + 4 + len(name)
+	defer func() { seedLen = 0 }()
+
 	seed := bytes.NewBuffer(make([]byte, 0, seedLen))
+	defer zeroBuf(seed)
+
 	seed.Write(seedPrefix)
 	seed.Write(convertNum(len(name)))
 	seed.Write(name)
@@ -50,8 +54,12 @@ func GetMasterKey(name, password []byte) ([]byte, error) {
 // Gets the seed provided a key and a counter. The website
 // should be UTF8 encoded.
 func GetSiteKey(mKey, website []byte, counter int) []byte {
+
 	seedLen := len(seedPrefix) + 4 + len(website) + 4
+	defer func() { seedLen = 0 }()
+
 	seed := bytes.NewBuffer(make([]byte, 0, seedLen))
+	defer zeroBuf(seed)
 
 	seed.Write(seedPrefix)
 	seed.Write(convertNum(len(website)))
@@ -89,6 +97,11 @@ func zeroSlice(slice []byte) {
 	for i := range slice {
 		slice[i] = 0
 	}
+}
+
+func zeroBuf(buf *bytes.Buffer) {
+	buf.Reset()
+	buf.Write(make([]byte, buf.Cap()))
 }
 
 func convertNum(i int) []byte {
