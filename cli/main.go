@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"bufio"
 	"os"
+	"math"
 )
 
 func main() {
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Split(bufio.ScanLines)
 
 	fmt.Println()
 
@@ -21,18 +24,15 @@ func main() {
 	} else {
 		fmt.Println("Full Name")
 		fmt.Print("Input: ")
-		name, err = readLine()
-		if err != nil {
-			fmt.Println("Error reading site: ", err)
-			return
-		}
+		scanner.Scan()
+		name = scanner.Bytes()
 	}
 	defer zeroSlice(name)
 
 	fmt.Println()
 
 	// get master password
-	fmt.Println("Password: ")
+	fmt.Println("Password")
 	fmt.Print("Input: ")
 	masterPass, err := terminal.ReadPassword(0)
 	defer zeroSlice(masterPass)
@@ -41,11 +41,8 @@ func main() {
 	if err != nil {
 		fmt.Println("[error: cannot use native password reader. password will echo!]")
 		fmt.Print("Input: ")
-		masterPass, err = readLine()
-		if err != nil {
-			fmt.Println("Error reading master password: ", err)
-			return
-		}
+		scanner.Scan()
+		masterPass = scanner.Bytes()
 	} else {
 		fmt.Println()
 	}
@@ -55,33 +52,41 @@ func main() {
 	// get website
 	fmt.Println("Website")
 	fmt.Print("Input: ")
-	site, err := readLine()
-	if err != nil {
-		fmt.Println("Error reading site: ", err)
-		return
-	}
+	scanner.Scan()
+	site := scanner.Bytes()
 	defer zeroSlice(site)
+
+	fmt.Println()
 
 	// get counter
 	fmt.Println("Counter [blank for 1]")
 	fmt.Print("Input: ")
-	var counter int
-	_, err = fmt.Scanln(&counter)
-	for err != nil {
-		fmt.Println("error: Please input a number!")
-		_, err = fmt.Scanln(&counter)
+	scanner.Scan()
+	counter := readDigits(scanner.Bytes())
+	for counter <= 0 {
+		fmt.Println("error: Please input a positive number!")
+		fmt.Print("Input: ")
+		scanner.Scan()
+		counter = readDigits(scanner.Bytes())
 	}
 	defer func() { counter = 0 }()
 
 	fmt.Println()
 
-	// get password type (note, since string must be used,
+	// get password type
+	// (note, since string must be used in GetPasswordType, we use strings here)
+	var pwType mpassgo.PasswordType
 	fmt.Println("Password Type [blank for maximum]")
 	fmt.Print("Input: ")
-	var pwTypeStr string
-	fmt.Scanln(&pwTypeStr)
+	scanner.Scan()
+	pwTypeStr := scanner.Text()
 
-	pwType, ok := mpassgo.GetPasswordType(pwTypeStr)
+	if pwTypeStr == "" {
+		pwType, ok = mpassgo.Maximum, true
+	} else {
+		pwType, ok = mpassgo.GetPasswordType(pwTypeStr)
+	}
+
 	for !ok {
 		fmt.Println("Try again! Valid password types: ")
 
@@ -93,11 +98,19 @@ func main() {
 		}
 
 		fmt.Print("Input: ")
-		fmt.Scanln(&pwTypeStr)
+		scanner.Scan()
+		pwTypeStr = scanner.Text()
+
+		if pwTypeStr == "" {
+			pwType, ok = mpassgo.Maximum, true
+		} else {
+			pwType, ok = mpassgo.GetPasswordType(pwTypeStr)
+		}
 	}
 
 	fmt.Println()
 
+	println(counter)
 	pass, err := mpassgo.GetPassword(name, site, masterPass, counter, pwType)
 	if err != nil {
 		fmt.Println("Error generating password: ", err)
@@ -106,9 +119,21 @@ func main() {
 	fmt.Println(string(pass))
 }
 
-func readLine() ([]byte, error) {
-	read := bufio.NewReader(os.Stdin)
-	return read.ReadSlice(10) // 10 is newline
+// turns an array of ASCII digits into an int. 1 if empty, 0 if error.
+// also handles if it ends in a newline
+func readDigits(slice []byte) int {
+
+	result := 0
+	for i := range slice {
+		byt := slice[len(slice) - i - 1]
+		if byt >= 48 && byt <= 57 {
+			result += int(byt - 48) * int(math.Pow10(i))
+		} else {
+			return 0
+		}
+	}
+
+	return result
 }
 
 func zeroSlice(slice []byte) {
