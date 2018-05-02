@@ -9,7 +9,6 @@ import (
 
 	"golang.org/x/crypto/scrypt"
 	"unicode/utf8"
-	"fmt"
 )
 
 var ErrInvalidTemplate = errors.New("invalid template provided")
@@ -23,12 +22,8 @@ func GetPassword(name, masterPass, website []byte, counter int, set TemplateSet)
 	}
 	defer zeroSlice(key)
 
-	fmt.Println(key)
-
 	seed := GetSeed(key, website, counter)
 	defer zeroSlice(seed)
-
-	fmt.Println(seed)
 
 	template := GetTemplate(seed, set)
 	password := SeedToPassword(seed, template)
@@ -82,8 +77,6 @@ func SeedToPassword(seed []byte, template []byte) []byte {
 		if runes == "" {
 			panic(ErrInvalidTemplate)
 		}
-		fmt.Println(seed[i+1])
-		fmt.Println(byte(len(runes)))
 
 		pass[i] = runes[seed[i+1]%byte(len(runes))]
 	}
