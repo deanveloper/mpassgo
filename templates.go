@@ -1,5 +1,10 @@
 package mpassgo
 
+import (
+	"sort"
+	"strings"
+)
+
 type PasswordType [][]byte
 
 var Maximum = PasswordType{
@@ -49,6 +54,36 @@ var Basic = PasswordType{
 var Pin = PasswordType{
 	[]byte("nnnn"),
 }
+
+// All valid password types represented as a string->PasswordType map.
+var PasswordTypes = map[string]PasswordType {
+	"maximum": Maximum,
+	"max": Maximum,
+	"long": Long,
+	"medium": Medium,
+	"med": Medium,
+	"short": Short,
+	"basic": Basic,
+	"pin": Pin,
+}
+
+// Gets a password type based on the string pwType.
+func GetPasswordType(pwType string) (PasswordType, bool) {
+	typ, ok := PasswordTypes[strings.ToLower(pwType)]
+	return typ, ok
+}
+
+
+// Gets the valid password types.
+func ValidPasswordTypes() []string {
+	validTypes := make([]string, len(PasswordTypes))
+	for k := range PasswordTypes {
+		validTypes = append(validTypes, k)
+	}
+	sort.Strings(validTypes)
+	return validTypes
+}
+
 
 var runeMap = map[rune]string{
 	'V': "AEIOU",
