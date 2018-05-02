@@ -15,7 +15,7 @@ var ErrInvalidTemplate = errors.New("invalid template provided")
 var saltPrefix = []byte("com.lyndir.masterpassword")
 
 // A convenience function that takes all needed inputs and generates the password from there.
-func GetPassword(name, masterPass, website []byte, counter int, set TemplateSet) ([]byte, error) {
+func GetPassword(name, website, masterPass []byte, counter int, set TemplateSet) ([]byte, error) {
 	key, err := GetKey(name, masterPass)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,8 @@ func GetSeed(key, website []byte, counter int) []byte {
 	seeded.Write(convertNum(counter))
 
 	hasher := hmac.New(sha256.New, key)
-	return hasher.Sum(seeded.Bytes())
+	hasher.Write(seeded.Bytes())
+	return hasher.Sum(nil)
 }
 
 // Figures out what the password template is going to be.
