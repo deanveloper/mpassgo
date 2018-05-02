@@ -56,15 +56,15 @@ var Pin = PasswordType{
 }
 
 // All valid password types represented as a string->PasswordType map.
-var PasswordTypes = map[string]PasswordType {
+var PasswordTypes = map[string]PasswordType{
 	"maximum": Maximum,
-	"max": Maximum,
-	"long": Long,
-	"medium": Medium,
-	"med": Medium,
-	"short": Short,
-	"basic": Basic,
-	"pin": Pin,
+	"max":     Maximum,
+	"long":    Long,
+	"medium":  Medium,
+	"med":     Medium,
+	"short":   Short,
+	"basic":   Basic,
+	"pin":     Pin,
 }
 
 // Gets a password type based on the string pwType.
@@ -72,7 +72,6 @@ func GetPasswordType(pwType string) (PasswordType, bool) {
 	typ, ok := PasswordTypes[strings.ToLower(pwType)]
 	return typ, ok
 }
-
 
 // Gets the valid password types.
 func ValidPasswordTypes() []string {
@@ -83,7 +82,6 @@ func ValidPasswordTypes() []string {
 	sort.Strings(validTypes)
 	return validTypes
 }
-
 
 var runeMap = map[rune]string{
 	'V': "AEIOU",

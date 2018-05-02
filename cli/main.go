@@ -1,12 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"github.com/deanveloper/mpassgo"
 	"golang.org/x/crypto/ssh/terminal"
-	"fmt"
-	"bufio"
-	"os"
 	"math"
+	"os"
 )
 
 func main() {
@@ -125,9 +125,9 @@ func readDigits(slice []byte) int {
 
 	result := 0
 	for i := range slice {
-		byt := slice[len(slice) - i - 1]
+		byt := slice[len(slice)-i-1]
 		if byt >= 48 && byt <= 57 {
-			result += int(byt - 48) * int(math.Pow10(i))
+			result += int(byt-48) * int(math.Pow10(i))
 		} else {
 			return 0
 		}
