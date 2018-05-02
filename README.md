@@ -1,5 +1,6 @@
 # mpassgo
-Password Generator Golang port of [MasterPassword].
+Golang port of [MasterPassword], a password manager that generates passwords on the spot,
+rather than storing them.
 
 ## Installation
 Because I'm lazy I do not have any binaries that are precompiled.
