@@ -21,6 +21,13 @@ func main() {
 	nameStr, ok := os.LookupEnv("MPW_FULLNAME")
 	if ok {
 		name = []byte(nameStr)
+		fmt.Println("Full Name")
+		fmt.Print("Input: (", nameStr, ")")
+		scanner.Scan()
+		temp := scanner.Bytes()
+		if len(temp) > 0 {
+			name = temp
+		}
 	} else {
 		fmt.Println("Full Name")
 		fmt.Print("Input: ")
@@ -59,7 +66,7 @@ func main() {
 	fmt.Println()
 
 	// get counter
-	fmt.Println("Counter [blank for 1]")
+	fmt.Println("Counter (1)")
 	fmt.Print("Input: ")
 	scanner.Scan()
 	counter := readDigits(scanner.Bytes())
@@ -76,7 +83,7 @@ func main() {
 	// get password type
 	// (note, since string must be used in GetPasswordType, we use strings here)
 	var pwType mpassgo.PasswordType
-	fmt.Println("Password Type [blank for maximum]")
+	fmt.Println("Password Type (maximum)")
 	fmt.Print("Input: ")
 	scanner.Scan()
 	pwTypeStr := scanner.Text()

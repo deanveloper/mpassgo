@@ -22,10 +22,11 @@ end
 
 # move to more human-friendly names
 for file in (ls mpw*)
-	set new_name (string replace 'darwin' 'mac' $file)
-	set new_name (string replace '386' '32' $file)
-	set new_name (string replace 'amd64' '64' $file)
-	switch $file
+	set new_name $file
+	set new_name (string replace 'darwin' 'mac' $new_name)
+	set new_name (string replace '386' '32' $new_name)
+	set new_name (string replace 'amd64' '64' $new_name)
+	switch $new_name
 	case "*windows*"
 		set new_name "$new_name".exe
 	end
