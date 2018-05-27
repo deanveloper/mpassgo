@@ -13,8 +13,8 @@ go get github.com/deanveloper/mpassgo
 
 CLI App:
 ```
-go get github.com/deanveloper/mpassgo/cli
-mv $GOPATH/bin/cli $GOPATH/bin/cli mpw
+go get github.com/deanveloper/mpassgo/cli/mpw
+mv $GOBIN/mpw <path> (if your GOBIN is not part of your path)
 ```
 
 ## Algorithm

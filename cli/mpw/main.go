@@ -110,7 +110,6 @@ func main() {
 
 	fmt.Println()
 
-	println(counter)
 	pass, err := mpassgo.GetPassword(name, site, masterPass, counter, pwType)
 	if err != nil {
 		fmt.Println("Error generating password: ", err)
