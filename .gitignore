@@ -2,5 +2,4 @@
 vendor/
 Gopkg.lock
 Gopkg.toml
-build/
-!build/build.fish
+build/bin
