@@ -123,6 +123,10 @@ func main() {
 // also handles if it ends in a newline
 func readDigits(slice []byte) int {
 
+	if len(slice) == 0 {
+		return 1
+	}
+
 	result := 0
 	for i := range slice {
 		byt := slice[len(slice)-i-1]
