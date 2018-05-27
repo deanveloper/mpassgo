@@ -21,8 +21,8 @@ func main() {
 	nameStr, ok := os.LookupEnv("MPW_FULLNAME")
 	if ok {
 		name = []byte(nameStr)
-		fmt.Println("Full Name")
-		fmt.Print("Input: (", nameStr, ")")
+		fmt.Println("Full Name (" + nameStr + ")")
+		fmt.Print("Input: ")
 		scanner.Scan()
 		temp := scanner.Bytes()
 		if len(temp) > 0 {
